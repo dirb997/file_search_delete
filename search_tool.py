@@ -37,6 +37,10 @@ def main():
             print("No files found")
             return
 
+        print(f"\nFound {len(found_files)} file(s):")
+        for file_path in found_files:
+            print(file_path)
+
         confirm = questionary.confirm(
             f"Are you SURE you want to delete {len(found_files)} file(s)"
         ).ask()
