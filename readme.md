@@ -1,4 +1,4 @@
-### Search and delete Python script
+# Search and delete Python script
 
 This small script runs a CLI that searches throught the system for files, let's you select
 which one you would like to delete and,  
