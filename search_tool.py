@@ -2,15 +2,23 @@ import os
 import questionary
 from send2trash import send2trash
 
+# Constants for file size units
+_FILE_SIZES = {
+    'B': 1,
+    'KB': 1024,
+    'MB': 1024 ** 2,
+    'GB': 1024 ** 3,
+    'TB': 1024 ** 4
+}
+
 def get_file_size(path):
     """This function calculates the file size and returns a string."""
     try:
         size_bytes = os.path.getsize(path)
-        for unit in ['B', 'KB', 'MB', 'GB']:
-            if size_bytes < 1024.0:
-                return f"{size_bytes:.1f} {unit}"
-            size_bytes /= 1024.0
-        return f"{size_bytes:.1f} TB"
+        for unit in _FILE_SIZES.keys():
+            if size_bytes < _FILE_SIZES[unit] * 1024:
+                return f"{size_bytes / _FILE_SIZES[unit]:.1f} {unit}"
+
     except OSError:
         return "Unknown size"
 
