@@ -1,5 +1,6 @@
 import os
 import questionary
+from send2trash import send2trash
 
 def get_file_size(path):
     """This function calculates the file size and returns a string."""
@@ -66,20 +67,20 @@ def main():
             return
 
         confirm = questionary.confirm(
-            f"[WARNING] Are you SURE you want to permanently delete {len(selected_files)} file(s)?"
+            f"[WARNING] Are you SURE you want to permanently move {len(selected_files)} file(s) to the trash?"
         ).ask()
 
         if confirm:
             success_count = 0
             for file_path in selected_files:
                 try:
-                    os.remove(file_path)
-                    print(f"[+] Deleted: {file_path}")
+                    send2trash(file_path)
+                    print(f"[+] Moved to trash: {file_path}")
                     success_count += 1
                 except Exception as e:
-                    print(f"[-] Failed to delete {file_path}: {e}")
+                    print(f"[-] Failed to move to trash {file_path}: {e}")
 
-            print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files deleted.")
+            print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files moved to trash.")
         else:
             print("[x] Deletion cancelled.")
 
