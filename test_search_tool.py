@@ -6,7 +6,6 @@ import pytest
 from search_tool import search_files, main, get_file_size
 
 def test_get_file_size(tmp_path):
-    # Create a 10-byte file to test the file size calculator
     test_file = tmp_path / "size_test.txt"
     test_file.write_bytes(b"0123456789") 
     
@@ -41,8 +40,8 @@ def test_search_files_no_match(tmp_path):
 @patch("search_tool.questionary.checkbox")
 @patch("search_tool.questionary.path")
 @patch("search_tool.questionary.text")
-@patch("search_tool.os.remove")
-def test_main_full_execution(mock_remove, mock_text, mock_path, mock_checkbox, mock_confirm, tmp_path):
+@patch("search_tool.send2trash")
+def test_main_full_execution(mock_send2trash, mock_text, mock_path, mock_checkbox, mock_confirm, tmp_path):
     # Setup a test file
     target_file = tmp_path / "steam_test.txt"
     target_file.write_text("dummy data")
@@ -57,8 +56,8 @@ def test_main_full_execution(mock_remove, mock_text, mock_path, mock_checkbox, m
     # Execute main
     main()
     
-    # Verify os.remove was targeted at the correct test file
-    mock_remove.assert_called_once_with(target_path_str)
+    # Verify send2trash was targeted at the correct test file
+    mock_send2trash.assert_called_once_with(target_path_str)
 
 @patch("search_tool.questionary.text")
 def test_main_empty_search(mock_text):
