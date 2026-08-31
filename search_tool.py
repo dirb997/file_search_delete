@@ -11,6 +11,11 @@ _FILE_SIZES = {
     'TB': 1024 ** 4
 }
 
+_DELETE_MODES = {
+    "Move to Trash (Recommended)": "trash",
+    "Permanently Delete (Not Recommended)": "permanent"
+}
+
 def get_file_size(path):
     """This function calculates the file size and returns a string."""
     try:
@@ -74,23 +79,50 @@ def main():
             print("[x] No files selected. Exiting.")
             return
 
-        confirm = questionary.confirm(
-            f"[WARNING] Are you SURE you want to permanently move {len(selected_files)} file(s) to the trash?"
+        # We added this section to allow the user to choose 
+        # between moving files to trash or permanently deleting them
+        choose_deteletion_mode = questionary.select(
+            "[*] Choose deletion mode:",
+            choices=list(_DELETE_MODES.keys())
         ).ask()
 
-        if confirm:
-            success_count = 0
-            for file_path in selected_files:
-                try:
-                    send2trash(file_path)
-                    print(f"[+] Moved to trash: {file_path}")
-                    success_count += 1
-                except Exception as e:
-                    print(f"[-] Failed to move to trash {file_path}: {e}")
+        if choose_deteletion_mode == _DELETE_MODES["Move to Trash (Recommended)"]:
+            confirm = questionary.confirm(
+                "[*] Are you sure you want to move the selected files to trash?"
+            ).ask()
 
-            print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files moved to trash.")
+            if confirm:
+                success_count = 0
+                for file_path in selected_files:
+                    try:
+                        send2trash(file_path)
+                        print(f"[+] Moved to trash: {file_path}")
+                        success_count += 1
+                    except Exception as e:
+                        print(f"[-] Failed to move to trash {file_path}: {e}")
+
+                print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files moved to trash.")
+            else:
+                print("[x] Operation cancelled. No files were moved to trash.")
+
+        elif choose_deteletion_mode == _DELETE_MODES["Permanently Delete (Not Recommended)"]:
+            confirm_full_delete = questionary.confirm(
+                "[!] Are you sure you want to permanently delete the selected files? This action cannot be undone."
+            ).ask()
+
+            if confirm_full_delete:
+                success_count = 0
+                for file_path in selected_files:
+                    try:
+                        os.remove(file_path)
+                        print(f"[+] Permanently deleted: {file_path}")
+                        success_count += 1
+                    except Exception as e:
+                        print(f"[-] Failed to delete {file_path}: {e}")
+
+                print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files permanently deleted.")
         else:
-            print("[x] Deletion cancelled.")
+                print("[x] Operation cancelled. No files were permanently deleted.")
 
     except KeyboardInterrupt:
         # This will handle the error if the user presses Ctrl+C to quit
