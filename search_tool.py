@@ -83,7 +83,7 @@ def main():
         # between moving files to trash or permanently deleting them
         choose_deteletion_mode = questionary.select(
             "[*] Choose deletion mode:",
-            choices=list(_DELETE_MODES.keys())
+            choices=[questionary.Choice(title=title, value=value) for title, value in _DELETE_MODES.items()]
         ).ask()
 
         if choose_deteletion_mode == _DELETE_MODES["Move to Trash (Recommended)"]:
