@@ -1,20 +1,9 @@
 import os
 import questionary
 from send2trash import send2trash
+from constants import _FILE_SIZES, _DELETE_MODES
 
 # Constants for file size units
-_FILE_SIZES = {
-    'B': 1,
-    'KB': 1024,
-    'MB': 1024 ** 2,
-    'GB': 1024 ** 3,
-    'TB': 1024 ** 4
-}
-
-_DELETE_MODES = {
-    "Move to Trash (Recommended)": "trash",
-    "Permanently Delete (Not Recommended)": "permanent"
-}
 
 def get_file_size(path):
     """This function calculates the file size and returns a string."""
