@@ -1,6 +1,7 @@
 import os
 import questionary
 from send2trash import send2trash
+from halo import Halo
 from constants import _FILE_SIZES, _DELETE_MODES
 
 # Constants for file size units
@@ -17,7 +18,6 @@ def get_file_size(path):
         return "Unknown size"
 
 def search_files(term, start_path):
-    print(f"\n[*] Searching for '{term}' in '{start_path}'...\n")
     matches = []
     
     for root, _, files in os.walk(start_path):
@@ -45,8 +45,15 @@ def main():
         
         if not search_path:
             return
+        
+        # Initialize a spinner to indicate that the search is in progress
+        spinner = Halo(text=f"[*] Searching for '{search_term}' in '{search_path}'...", spinner='line')
+        spinner.start()
 
         found_files = search_files(search_term, search_path)
+
+        # Stop the spinner after the search is complete
+        spinner.stop()
 
         if not found_files:
             print("[-] No files found.")
