@@ -1,9 +1,7 @@
 # Search and delete Python script
 
-This small script runs a CLI that searches throught the system for files, let's you select
-which one you would like to delete and,  
-when the deletion has been completed, it shows a
-confirmation notification.
+This small script runs a CLI that searches throught the system for files, let's you select which one you would like to delete and,  
+when the deletion has been completed, it shows a confirmation notification.
 
 # Screenshots
 <img width="520" height="78" alt="Screenshot 2026-08-29 at 23 40 43" src="https://github.com/user-attachments/assets/6f8972ae-614b-45c5-bc1a-c59a613e4693" />
