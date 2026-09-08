@@ -28,101 +28,114 @@ def search_files(term, start_path):
     return matches
 
 def main():
-    try:
-        search_term = questionary.text(">>> Enter the file name you want to search for:").ask()
+    while True:
+        try:
+            search_term = questionary.text(">>> Enter the file name you want to search for:").ask()
 
-        if not search_term:
-            print("[!] Search cannot be empty.")
-            return
+            # Handles Ctrl+C or cancellation by the user
+            if search_term is None:
+                return
 
-        home_dir = os.path.expanduser("~")
-        
-        # Use questionary.path for auto-complete support when typing directories
-        search_path = questionary.path(
-            ">>> Enter the path where you want to search:",
-            default=home_dir
-        ).ask()
-        
-        if not search_path:
-            return
-        
-        # Initialize a spinner to indicate that the search is in progress
-        spinner = Halo(text=f"[*] Searching for '{search_term}' in '{search_path}'...", spinner='line')
-        spinner.start()
+            # Handles when user presses Enter on an empty input
+            if not search_term.strip():
+                print("[!] Search cannot be empty.")
+                return
 
-        found_files = search_files(search_term, search_path)
+            home_dir = os.path.expanduser("~")
+            
+            search_path = questionary.path(
+                ">>> Enter the path where you want to search:",
+                default=home_dir
+            ).ask()
+            
+            if search_path is None:
+                return
 
-        # Stop the spinner after the search is complete
-        spinner.stop()
+            spinner = Halo(text=f"[*] Searching for '{search_term}' in '{search_path}'...", spinner='line')
+            spinner.start()
 
-        if not found_files:
-            print("[-] No files found.")
-            return
+            try:
+                found_files = search_files(search_term, search_path)
+            finally:
+                spinner.stop()
 
-        # Format the choices to show the file path AND the file size
-        choices = []
-        for file_path in found_files:
-            size_str = get_file_size(file_path)
-            choices.append(questionary.Choice(title=f"{file_path} ({size_str})", value=file_path))
+            if not found_files:
+                print("[-] No files found.")
 
-        # Checkbox menu for selecting files to delete
-        selected_files = questionary.checkbox(
-            "[*] Select the files you want to delete (Space to select, 'a' to select all, Enter to confirm):",
-            choices=choices
-        ).ask()
+                retry = questionary.confirm("Do you want to search again?").ask()
+                if retry:
+                    continue  # Restart the loop cleanly
+                else:
+                    print("[x] Exiting.")
+                    return
 
-        if not selected_files:
-            print("[x] No files selected. Exiting.")
-            return
+            choices = []
+            for file_path in found_files:
+                size_str = get_file_size(file_path)
+                choices.append(questionary.Choice(title=f"{file_path} ({size_str})", value=file_path))
 
-        # We added this section to allow the user to choose 
-        # between moving files to trash or permanently deleting them
-        choose_deteletion_mode = questionary.select(
-            "[*] Choose deletion mode:",
-            choices=[questionary.Choice(title=title, value=value) for title, value in _DELETE_MODES.items()]
-        ).ask()
-
-        if choose_deteletion_mode == _DELETE_MODES["Move to Trash (Recommended)"]:
-            confirm = questionary.confirm(
-                "[*] Are you sure you want to move the selected files to trash?"
+            selected_files = questionary.checkbox(
+                "[*] Select the files you want to delete (Space to select, 'a' to select all, Enter to confirm):",
+                choices=choices
             ).ask()
 
-            if confirm:
-                success_count = 0
-                for file_path in selected_files:
-                    try:
-                        send2trash(file_path)
-                        print(f"[+] Moved to trash: {file_path}")
-                        success_count += 1
-                    except Exception as e:
-                        print(f"[-] Failed to move to trash {file_path}: {e}")
+            if selected_files is None:
+                print("[x] Operation cancelled by the user. Exiting cleanly.")
+                return
 
-                print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files moved to trash.")
-            else:
-                print("[x] Operation cancelled. No files were moved to trash.")
+            if not selected_files:
+                print("[x] No files selected. Exiting.")
+                return
 
-        elif choose_deteletion_mode == _DELETE_MODES["Permanently Delete (Not Recommended)"]:
-            confirm_full_delete = questionary.confirm(
-                "[!] Are you sure you want to permanently delete the selected files? This action cannot be undone."
+            choose_deteletion_mode = questionary.select(
+                "[*] Choose deletion mode:",
+                choices=[questionary.Choice(title=title, value=value) for title, value in _DELETE_MODES.items()]
             ).ask()
 
-            if confirm_full_delete:
-                success_count = 0
-                for file_path in selected_files:
-                    try:
-                        os.remove(file_path)
-                        print(f"[+] Permanently deleted: {file_path}")
-                        success_count += 1
-                    except Exception as e:
-                        print(f"[-] Failed to delete {file_path}: {e}")
+            if choose_deteletion_mode == "trash":
+                confirm = questionary.confirm(
+                    "[*] Are you sure you want to move the selected files to trash?"
+                ).ask()
 
-                print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files permanently deleted.")
-        else:
-                print("[x] Operation cancelled. No files were permanently deleted.")
+                if confirm:
+                    success_count = 0
+                    for file_path in selected_files:
+                        try:
+                            send2trash(file_path)
+                            print(f"[+] Moved to trash: {file_path}")
+                            success_count += 1
+                        except Exception as e:
+                            print(f"[-] Failed to move to trash {file_path}: {e}")
 
-    except KeyboardInterrupt:
-        # This will handle the error if the user presses Ctrl+C to quit
-        print("\n\n[x] The operation has been cancelled by user. Exiting cleanly.")
+                    print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files moved to trash.")
+                else:
+                    print("[x] Operation cancelled. No files were moved to trash.")
+
+            elif choose_deteletion_mode == "permanent":
+                confirm_full_delete = questionary.confirm(
+                    "[!] Are you sure you want to permanently delete the selected files? This action cannot be undone."
+                ).ask()
+
+                if confirm_full_delete:
+                    success_count = 0
+                    for file_path in selected_files:
+                        try:
+                            os.remove(file_path)
+                            print(f"[+] Permanently deleted: {file_path}")
+                            success_count += 1
+                        except Exception as e:
+                            print(f"[-] Failed to delete {file_path}: {e}")
+
+                    print(f"\n[*] Cleanup completed. {success_count}/{len(selected_files)} files permanently deleted.")
+                else:
+                    print("[x] Operation cancelled. No files were permanently deleted.")
+            
+            # Exit loop after successful execution
+            break
+
+        except KeyboardInterrupt:
+            print("\n\n[x] The operation has been cancelled by user. Exiting cleanly.")
+            break
 
 if __name__ == "__main__":
     main()
