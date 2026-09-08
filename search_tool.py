@@ -54,9 +54,10 @@ def main():
             spinner = Halo(text=f"[*] Searching for '{search_term}' in '{search_path}'...", spinner='line')
             spinner.start()
 
-            found_files = search_files(search_term, search_path)
-
-            spinner.stop()
+            try:
+                found_files = search_files(search_term, search_path)
+            finally:
+                spinner.stop()
 
             if not found_files:
                 print("[-] No files found.")
@@ -77,6 +78,10 @@ def main():
                 "[*] Select the files you want to delete (Space to select, 'a' to select all, Enter to confirm):",
                 choices=choices
             ).ask()
+
+            if selected_files is None:
+                print("[x] Operation cancelled by the user. Exiting cleanly.")
+                return
 
             if not selected_files:
                 print("[x] No files selected. Exiting.")

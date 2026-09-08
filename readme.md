@@ -1,8 +1,8 @@
-# Search and delete Python tool designed for MacOS
+# Search and delete Python tool designed for macOS
 
 This small script will run a CLI that searches throught the system for the desired files, let's you select which ones you would like to delete and, when the deletion has been completed, it will show a confirmation message.
 
-In a future improvement the tool will recognize immediately the system (MacOS/Linux/Windows) and the preferences of the user.
+In a future improvement the tool will recognize immediately the system (macOS/Linux/Windows) and the preferences of the user.
 
 # Screenshots
 <img width="520" height="78" alt="Screenshot 2026-08-29 at 23 40 43" src="https://github.com/user-attachments/assets/6f8972ae-614b-45c5-bc1a-c59a613e4693" />
