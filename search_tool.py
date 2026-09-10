@@ -92,7 +92,7 @@ def main():
 
             choose_deteletion_mode = questionary.select(
                 t("select_mode"),
-                choices=[questionary.Choice(title=title, value=value) for title, value in _DELETE_MODES.items()]
+                choices=[questionary.Choice(title=t(f"{value}_mode"), value=value) for value in _DELETE_MODES.items()]
             ).unsafe_ask()
 
             if choose_deteletion_mode is None:

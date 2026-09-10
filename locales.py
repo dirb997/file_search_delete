@@ -19,7 +19,8 @@ LANGUAGES = {
         "cleanup_trash": "\n[*] Cleanup completed. {success}/{total} files moved to trash.",
         "cleanup_permanent": "\n[*] Cleanup completed. {success}/{total} files permanently deleted.",
         "cancelled": "[x] Operation cancelled. No files were modified.",
-        "keyboard_interrupt": "\n\n[x] The operation has been cancelled by user. Exiting cleanly."
+        "keyboard_interrupt": "\n\n[x] The operation has been cancelled by user. Exiting cleanly.",
+        "failed_to_move_to_trash": "[!] Failed to move to trash: {file}. Error: {error}",
     },
     "es": {
         "prompt_search": "Introduce el nombre del archivo que quieres buscar:",
@@ -36,12 +37,13 @@ LANGUAGES = {
         "permanent_mode": "Eliminar permanentemente (No recomendado)",
         "confirm_trash": "[*] ¿Estás seguro de que quieres mover los archivos seleccionados a la papelera?",
         "confirm_permanent": "[!] ¿Estás seguro de que quieres eliminar permanentemente los archivos seleccionados? Esta acción no se puede deshacer.",
-        "success_trash": "[+] Movido a la papelera:",
-        "success_permanent": "[+] Eliminado permanentemente:",
+        "success_trash": "[+] Movido a la papelera: {file}",
+        "success_permanent": "[+] Eliminado permanentemente: {file}",
         "cleanup_trash": "\n[*] Limpieza completada. {success}/{total} archivos movidos a la papelera.",
         "cleanup_permanent": "\n[*] Limpieza completada. {success}/{total} archivos eliminados permanentemente.",
         "cancelled": "[x] Operación cancelada. No se modificaron archivos.",
-        "keyboard_interrupt": "\n\n[x] Operación cancelada por el usuario. Saliendo de la herramienta."
+        "keyboard_interrupt": "\n\n[x] Operación cancelada por el usuario. Saliendo de la herramienta.",
+        "failed_to_move_to_trash": "[!] No se pudo mover a la papelera: {file}. Error: {error}",
     },
     # Future languages can be added here -> "fr": { ... }, "de": { ... }, etc.
 }
