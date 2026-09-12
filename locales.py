@@ -21,6 +21,8 @@ LANGUAGES = {
         "cancelled": "[x] Operation cancelled. No files were modified.",
         "keyboard_interrupt": "\n\n[x] The operation has been cancelled by user. Exiting cleanly.",
         "failed_to_move_to_trash": "[!] Failed to move to trash: {file}. Error: {error}",
+        "failed_to_delete": "[!] Failed to delete: {file}. Error: {error}",
+        "dry_run": "[DRY RUN] Would move to trash: {file}.",
     },
     "es": {
         "prompt_search": "Introduce el nombre del archivo que quieres buscar:",
