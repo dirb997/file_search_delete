@@ -10,3 +10,5 @@ _DELETE_MODES = {
     "Move to Trash (Recommended)": "trash",
     "Permanently Delete (Not Recommended)": "permanent",
 }
+
+EXClUDE_DIRS = {".git", "__pycache__", "node_modules", ".venv", "venv", ".idea"}
