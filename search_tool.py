@@ -10,7 +10,7 @@ def process_file(file_path, mode="trash", dry_run=False):
     """This helper function processes a file based on the selected deletion mode."""
     if dry_run:
         print(t("dry_run", file=file_path))
-        return
+        return True
 
     try:
         if mode == "trash":
