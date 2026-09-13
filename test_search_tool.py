@@ -3,7 +3,7 @@ from unittest.mock import patch
 import pytest
 
 # Import the functions from your script
-from search_tool import search_files, main, get_file_size
+from search_tool import search_files, main, get_file_size, process_file
 
 def test_get_file_size(tmp_path):
     test_file = tmp_path / "size_test.txt"
@@ -35,57 +35,60 @@ def test_search_files_no_match(tmp_path):
     matches = search_files("unknown_term", str(tmp_path))
     assert len(matches) == 0
 
-# Mock the UI components from bottom to top
+def test_process_file_dry_run(tmp_path):
+    test_file = tmp_path / "dry_run_test.txt"
+    test_file.write_text("data")
+    
+    # Dry run should not delete the file
+    result = process_file(str(test_file), mode="trash", dry_run=True)
+    assert result is True
+    assert test_file.exists()
+
+def test_process_file_permanent_deletion(tmp_path):
+    test_file = tmp_path / "permanent_delete_test.txt"
+    test_file.write_text("data")
+    
+    # Permanent deletion should remove the file
+    result = process_file(str(test_file), mode="permanent", dry_run=False)
+    assert result is True
+    assert not test_file.exists()
+
+@patch("search_tool.send2trash")
+def test_process_file_trash(mock_send2trash, tmp_path):
+    test_file = tmp_path / "trash_test.txt"
+    test_file.write_text("data")
+    
+    # Trash mode should call send2trash
+    result = process_file(str(test_file), mode="trash", dry_run=False)
+    assert result is True
+    mock_send2trash.assert_called_once_with(str(test_file))
+
+@patch("search_tool.send2trash")
 @patch("search_tool.questionary.confirm")
 @patch("search_tool.questionary.select")
 @patch("search_tool.questionary.checkbox")
 @patch("search_tool.questionary.path")
 @patch("search_tool.questionary.text")
-def test_main_trash_execution(mock_text, mock_path, mock_checkbox, mock_select, mock_confirm, tmp_path):
+def test_main_trash_execution(mock_text, mock_path, mock_checkbox, mock_select, mock_confirm, mock_send2trash, tmp_path):
     # Setup a test file
     target_file = tmp_path / "steam_test.txt"
     target_file.write_text("dummy data")
     target_path_str = str(target_file)
     
     # Mock the sequential inputs
-    mock_text.return_value.ask.return_value = "steam"                 # User inputs search term
-    mock_path.return_value.ask.return_value = str(tmp_path)           # User inputs directory
-    mock_checkbox.return_value.ask.return_value = [target_path_str]   # User selects the file from the checkbox
-    mock_select.return_value.ask.return_value = "trash"               # User chooses to move to trash
-    mock_confirm.return_value.ask.return_value = True                # User accepts deletion (Y)
+    mock_text.return_value.unsafe_ask.side_effect = ["steam", None]                 # User inputs search term
+    mock_path.return_value.unsafe_ask.return_value = str(tmp_path)           # User inputs directory
+    mock_checkbox.return_value.unsafe_ask.return_value = [target_path_str]   # User selects the file from the checkbox
+    mock_select.return_value.unsafe_ask.return_value = "trash"               # User chooses to move to trash
+    mock_confirm.return_value.unsafe_ask.return_value = True                # User accepts deletion (Y)
     
     # Execute main
     main()
 
     # Verify the file was moved to trash (it no longer exists in the original location)
-    assert not target_file.exists()
-
-@patch("search_tool.questionary.confirm")
-@patch("search_tool.questionary.select")
-@patch("search_tool.questionary.checkbox")
-@patch("search_tool.questionary.path")
-@patch("search_tool.questionary.text")
-def test_main_permanent_deletion(mock_text, mock_path, mock_checkbox, mock_select, mock_confirm, tmp_path):
-    # Setup a test file
-    target_file = tmp_path / "steam_test_permanent.txt"
-    target_file.write_text("dummy data")
-    target_path_str = str(target_file)
-    
-    # Mock the sequential inputs
-    mock_text.return_value.ask.return_value = "steam"                 # User inputs search term
-    mock_path.return_value.ask.return_value = str(tmp_path)           # User inputs directory
-    mock_checkbox.return_value.ask.return_value = [target_path_str]   # User selects the file from the checkbox
-    mock_select.return_value.ask.return_value = "permanent"           # User chooses permanent deletion
-    mock_confirm.return_value.ask.return_value = True                 # User confirms deletion (Y)
-    
-    # Execute main
-    main()
-    
-    # Verify the file was deleted permanently
-    assert not target_file.exists()
+    mock_send2trash.assert_called_once_with(str(target_file))
 
 @patch("search_tool.questionary.text")
 def test_main_empty_search(mock_text):
-    # Simulate empty search term
-    mock_text.return_value.ask.return_value = ""
+    mock_text.return_value.unsafe_ask.return_value = ""  # User inputs empty search term
     main()
