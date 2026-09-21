@@ -1,5 +1,4 @@
 import os
-from turtle import mode
 import questionary
 from send2trash import send2trash
 from halo import Halo
@@ -19,6 +18,9 @@ def process_file(file_path, mode="trash", dry_run=False):
         elif mode == "permanent":
             os.remove(file_path)
             print(t("success_permanent", file=file_path))
+        else:
+            print(t("invalid_mode", mode=mode))
+            return False
         return True
     except Exception as e:
         key = "failed_to_move_to_trash" if mode == "trash" else "failed_to_delete"
@@ -130,9 +132,12 @@ def main():
                 for file_path in selected_files:
                     if process_file(file_path, mode=choose_deteletion_mode, dry_run=False):
                         success_count += 1
-                print(t("cleanup_trash", success=success_count, total=len(selected_files)))
+                summary_key= "cleanup_trash" if choose_deteletion_mode == "trash" else "cleanup_permanent"
+                print(t(summary_key, success=success_count, total=len(selected_files)))
+                return
             else:
                 print(t("cancelled"))
+                return
 
         except KeyboardInterrupt:
             print(t("keyboard_interrupt"))
