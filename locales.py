@@ -48,6 +48,7 @@ LANGUAGES = {
         "keyboard_interrupt": "\n\n[x] Operación cancelada por el usuario. Saliendo de la herramienta.",
         "failed_to_move_to_trash": "[!] No se pudo mover a la papelera: {file}. Error: {error}",
         "failed_to_delete": "[!] No se pudo eliminar: {file}. Error: {error}",
+        "invalid_mode": "[!] Modo de eliminación inválido: {mode}. No se realizó ninguna acción."
     },
     # Future languages can be added here -> "fr": { ... }, "de": { ... }, etc.
 }
