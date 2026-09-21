@@ -11,7 +11,7 @@ LANGUAGES = {
         "no_selected": "[x] No files selected. Exiting.",
         "select_mode": "[*] Choose deletion mode:",
         "trash_mode": "Move to Trash (Recommended)",
-        "permanent_mode": "Permanently Delete (Not Recommended)",
+        "permanent_mode": "Permanently Delete",
         "confirm_trash": "[*] Are you sure you want to move the selected files to trash?",
         "confirm_permanent": "[!] Are you sure you want to permanently delete the selected files? This action cannot be undone.",
         "success_trash": "[+] Moved to trash:",
@@ -23,6 +23,7 @@ LANGUAGES = {
         "failed_to_move_to_trash": "[!] Failed to move to trash: {file}. Error: {error}",
         "failed_to_delete": "[!] Failed to delete: {file}. Error: {error}",
         "dry_run": "[DRY RUN] Would move to trash: {file}.",
+        "invalid_mode": "[!] Invalid deletion mode: {mode}. No action taken."
     },
     "es": {
         "prompt_search": "Introduce el nombre del archivo que quieres buscar:",
@@ -36,7 +37,7 @@ LANGUAGES = {
         "no_selected": "[x] No se seleccionaron archivos. Saliendo.",
         "select_mode": "[*] Elige el modo de eliminación:",
         "trash_mode": "Mover a la papelera (Recomendado)",
-        "permanent_mode": "Eliminar permanentemente (No recomendado)",
+        "permanent_mode": "Eliminar permanentemente",
         "confirm_trash": "[*] ¿Estás seguro de que quieres mover los archivos seleccionados a la papelera?",
         "confirm_permanent": "[!] ¿Estás seguro de que quieres eliminar permanentemente los archivos seleccionados? Esta acción no se puede deshacer.",
         "success_trash": "[+] Movido a la papelera: {file}",
@@ -46,6 +47,8 @@ LANGUAGES = {
         "cancelled": "[x] Operación cancelada. No se modificaron archivos.",
         "keyboard_interrupt": "\n\n[x] Operación cancelada por el usuario. Saliendo de la herramienta.",
         "failed_to_move_to_trash": "[!] No se pudo mover a la papelera: {file}. Error: {error}",
+        "failed_to_delete": "[!] No se pudo eliminar: {file}. Error: {error}",
+        "invalid_mode": "[!] Modo de eliminación inválido: {mode}. No se realizó ninguna acción."
     },
     # Future languages can be added here -> "fr": { ... }, "de": { ... }, etc.
 }
