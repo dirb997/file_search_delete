@@ -29,16 +29,26 @@ pipeline {
             steps {
                 // Bump the version 
                 sh '''
-                    python3 -c'
-                    with open("VERSION", "r") as f:
-                        version = f.read().strip()
-                    parts = list(map(int, version.split(".")))
-                    parts[2] += 1  # Increment the patch version
-                    new_version = ".".join(map(str, parts))
-                    with open("VERSION", "w") as f:
-                        f.write(new_version)
-                    print(f"Version bumped to {new_version}")
-                    '
+cat << 'EOF' > bump_version.py
+import os
+
+if not os.path.exists("VERSION"):
+    with open("VERSION", "w") as f:
+        f.write("1.0.0")
+
+with open("VERSION", "r") as f:
+    v = f.read().strip()
+
+parts = list(map(int, v.split(".")))
+parts[2] += 1  # Increment patch version
+new_v = ".".join(map(str, parts))
+
+with open("VERSION", "w") as f:
+    f.write(new_v)
+
+print("Bumped version from " + v + " to " + new_v)
+EOF
+                    python3 bump_version.py
                 '''
             }
 
