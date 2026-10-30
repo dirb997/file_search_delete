@@ -38,6 +38,7 @@ pipeline {
                     with open("VERSION", "w") as f:
                         f.write(new_version)
                     print(f"Version bumped to {new_version}")
+                    '
                 '''
             }
 
