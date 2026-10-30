@@ -49,8 +49,10 @@ pipeline {
                 '''
             }
 
-            success {
-                echo 'Changes pushed and tagged successfully.'
+            post {
+                success {
+                    echo 'Changes pushed and tagged successfully.'
+                }
             }
         }
     }
