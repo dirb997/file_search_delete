@@ -7,6 +7,12 @@ from locales import t
 
 def process_file(file_path, mode="trash", dry_run=False):
     """This helper function processes a file based on the selected deletion mode."""
+    if mode not in {"trash", "permanent"}:
+        print(t("invalid_mode", mode=mode))
+        return False
+
+    file_path = os.path.abspath(os.path.expanduser(os.fspath(file_path)))
+
     if dry_run:
         print(t("dry_run", file=file_path))
         return True
@@ -15,14 +21,11 @@ def process_file(file_path, mode="trash", dry_run=False):
         if mode == "trash":
             send2trash(file_path)
             print(t("success_trash", file=file_path))
-        elif mode == "permanent":
+        else:
             os.remove(file_path)
             print(t("success_permanent", file=file_path))
-        else:
-            print(t("invalid_mode", mode=mode))
-            return False
         return True
-    except Exception as e:
+    except OSError as e:
         key = "failed_to_move_to_trash" if mode == "trash" else "failed_to_delete"
         print(t(key, file=file_path, error=e))
         return False

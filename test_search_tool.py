@@ -53,6 +53,25 @@ def test_process_file_permanent_deletion(tmp_path):
     assert result is True
     assert not test_file.exists()
 
+def test_process_file_expands_user_path(tmp_path, monkeypatch):
+    test_file = tmp_path / "expanded_path.txt"
+    test_file.write_text("data")
+    monkeypatch.setenv("HOME", str(tmp_path))
+
+    result = process_file("~/expanded_path.txt", mode="permanent")
+
+    assert result is True
+    assert not test_file.exists()
+
+def test_process_file_rejects_invalid_mode(tmp_path):
+    test_file = tmp_path / "invalid_mode.txt"
+    test_file.write_text("data")
+
+    result = process_file(str(test_file), mode="unsupported")
+
+    assert result is False
+    assert test_file.exists()
+
 @patch("search_tool.send2trash")
 def test_process_file_trash(mock_send2trash, tmp_path):
     test_file = tmp_path / "trash_test.txt"
